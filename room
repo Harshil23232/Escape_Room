@@ -3,95 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Escape-O-Mania</title>
+  <title>Business Booking Site</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
+      background-color: #f4f4f4;
       color: #333;
     }
-    header, footer {
-      background: #222;
-      color: #fff;
-      padding: 1em 0;
+
+    .container {
+      padding: 2rem;
       text-align: center;
     }
-    main {
-      max-width: 800px;
-      margin: auto;
-      padding: 1em;
+
+    h1, h2 {
+      margin-bottom: 1rem;
     }
-    section {
-      background: #fff;
-      margin: 1em 0;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    input, textarea, button, select {
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
       width: 100%;
-      margin: 0.5em 0;
-      padding: 0.5em;
-      font-size: 1em;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
     }
-    iframe {
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 2rem;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    input, select, button {
+      display: block;
       width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
       border: none;
-      aspect-ratio: 16/9;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Escape-O-Mania</h1>
-    <p>Immersive Escape Rooms & Arcade Fun in Monmouth Junction, NJ</p>
-  </header>
-
-  <main>
-    <section>
-      <h2>Book Your Experience</h2>
-      <label for="date">Choose a date:</label>
-      <input type="date" id="date" name="booking-date" />
-      <button onclick="alert('Booking confirmed!')">Confirm Booking</button>
+  <div class="container">
+    <section class="about-us">
+      <h1>About Us</h1>
+      <p id="about-content"> <!-- Add your About Us content here --> </p>
     </section>
 
-    <section>
-      <h2>Ask Our AI FAQ Bot</h2>
-      <input type="text" id="faq-question" placeholder="Type your question..." />
-      <button onclick="askFaq()">Ask</button>
-      <p id="faq-answer"></p>
-    </section>
+    <button id="registerBtn">Register</button>
+  </div>
 
-    <section>
-      <h2>Direct Support</h2>
-      <p>Text or call us at <strong>(555) 123-ESCAPE</strong></p>
-      <textarea placeholder="Write a message..."></textarea>
-      <button onclick="alert('Message sent!')">Send Message</button>
-    </section>
+  <!-- Popups -->
+  <div class="modal" id="step1">
+    <div class="modal-content">
+      <h2>Register</h2>
+      <input type="text" placeholder="First Name" id="firstName" />
+      <input type="text" placeholder="Last Name" id="lastName" />
+      <input type="email" placeholder="Email" id="email" />
+      <input type="tel" placeholder="Phone Number" id="phone" />
+      <button onclick="nextStep(2)">Next</button>
+    </div>
+  </div>
 
-    <section>
-      <h2>🎥 Virtual Tour</h2>
-      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-    </section>
-  </main>
+  <div class="modal" id="step2">
+    <div class="modal-content">
+      <h2>Select Time Slot</h2>
+      <input type="date" id="date" />
+      <select id="timeSlot"></select>
+      <button onclick="nextStep(3)">Next</button>
+    </div>
+  </div>
 
-  <footer>
-    <p>📍 Located in Monmouth Junction, NJ</p>
-    <p>© 2025 Escape-O-Mania. All rights reserved.</p>
-  </footer>
+  <div class="modal" id="step3">
+    <div class="modal-content">
+      <h2>Confirmation</h2>
+      <p>Your booking has been confirmed!</p>
+      <button onclick="closePopups()">Close</button>
+    </div>
+  </div>
 
   <script>
-    function askFaq() {
-      const question = document.getElementById("faq-question").value.toLowerCase();
-      let answer = "Our AI is thinking... please rephrase or try again.";
-      if (question.includes("age")) {
-        answer = "Our escape rooms are recommended for ages 12 and up. Families are welcome!";
-      } else if (question.includes("price")) {
-        answer = "Pricing starts at $29.99 per person with group discounts available.";
-      }
-      document.getElementById("faq-answer").innerText = answer;
+    const modals = ["step1", "step2", "step3"];
+
+    document.getElementById("registerBtn").addEventListener("click", () => {
+      document.getElementById("step1").style.display = "block";
+    });
+
+    function nextStep(step) {
+      modals.forEach(id => document.getElementById(id).style.display = "none");
+      document.getElementById("step" + step).style.display = "block";
+    }
+
+    function closePopups() {
+      modals.forEach(id => document.getElementById(id).style.display = "none");
+      window.scrollTo(0, 0);
+    }
+
+    // Populate timeslots from 9 AM to 12 AM
+    const slotSelect = document.getElementById("timeSlot");
+    for (let h = 9; h <= 24; h++) {
+      const hour = h <= 12 ? h : h - 12;
+      const ampm = h < 12 || h === 24 ? 'AM' : 'PM';
+      const display = `${hour}:00 ${ampm}`;
+      const option = document.createElement("option");
+      option.value = display;
+      option.textContent = display;
+      slotSelect.appendChild(option);
     }
   </script>
 </body>
